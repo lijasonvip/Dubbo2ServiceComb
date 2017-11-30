@@ -32,7 +32,8 @@ public class JavaFileReplacer {
 
     public void ReadJavaFile(List<String> files) {
         for (String f : files) {
-            Replacer(f);
+            ReplacerJavaType r = MarkReplaceType(f);
+            ReplaceStarter(f, r);
             System.out.println("replacing " + f);
         }
         System.out.println("done");
@@ -84,14 +85,14 @@ public class JavaFileReplacer {
             ReplaceServiceType(f, replacerJavaType);
         }
 
-        if (replacerJavaType.isBeanUtilFind() && replacerJavaType.isLogUtilFind() && replacerJavaType.isMainFind() && replacerJavaType.isGetBeanFild()) {
+        if (replacerJavaType.isMainFind() && !replacerJavaType.isGetBeanFild()) {
             //consumer main type
-            ReplaceConsumerMainType(f, replacerJavaType);
+            ReplaceProviderMainType(f, replacerJavaType);
         }
 
         if (replacerJavaType.isBeanUtilFind() && replacerJavaType.isLogUtilFind() && replacerJavaType.isMainFind() && !replacerJavaType.isGetBeanFild()) {
             //provider main type
-            ReplaceProviderMainType(f, replacerJavaType);
+            ReplaceConsumerMainType(f, replacerJavaType);
         }
 
     }
