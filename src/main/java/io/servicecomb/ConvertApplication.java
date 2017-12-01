@@ -7,17 +7,21 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import io.servicecomb.replacer.JavaFileReplacer;
-import io.servicecomb.utils.*;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import io.servicecomb.replacer.JavaFileReplacer;
 import io.servicecomb.replacer.PomReplacer;
+import io.servicecomb.utils.DirectoryManager;
+import io.servicecomb.utils.FileManager;
+import io.servicecomb.utils.FileUtils;
+import io.servicecomb.utils.JavaParseUtils;
+import io.servicecomb.utils.MicroserviceYamlGenerator;
+import io.servicecomb.utils.XmlGenerator;
 
 public class ConvertApplication {
 
     public static void main(String[] args) throws IOException, XmlPullParserException {
-        DirectoryManager directoryManager = new DirectoryManager("/home/bo/workspace/dubbo-example/dubbo-sample");
+        DirectoryManager directoryManager = new DirectoryManager("/tmp/dubbo-to-servicecomb/dubbo-sample");
 
         Queue<File> todoDirectories = new ConcurrentLinkedQueue<>(directoryManager.getTodoDirectories());
         while (!todoDirectories.isEmpty()) {
