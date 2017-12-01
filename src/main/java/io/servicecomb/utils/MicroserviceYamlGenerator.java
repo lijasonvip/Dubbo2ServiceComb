@@ -19,6 +19,8 @@ import io.servicecomb.ServiceCombProperties.ServiceDefinition;
 public class MicroserviceYamlGenerator {
   private static final String MICROSERVICE_FILE_NAME = "microservice.yaml";
 
+  private static final String DEFAULT_SERVICE_REGISTRY_ADDRESS = "http://127.0.0.1:30100";
+
   public static void generate(String resourceLocation, String applicationId,
       DubboProperties dubboProperties) throws IOException {
     ServiceCombProperties serviceCombProperties = convertDubboPropertiesToServiceCombProperties(applicationId,
@@ -42,7 +44,7 @@ public class MicroserviceYamlGenerator {
     Cse cse = new Cse();
     CseService cseService = new CseService();
     CseServiceRegistry cseServiceRegistry = new CseServiceRegistry();
-    cseServiceRegistry.setAddress("http://127.0.0.1:30100");
+    cseServiceRegistry.setAddress(DEFAULT_SERVICE_REGISTRY_ADDRESS);
     cseService.setRegistry(cseServiceRegistry);
     cse.setService(cseService);
 

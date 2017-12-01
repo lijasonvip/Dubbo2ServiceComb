@@ -49,10 +49,13 @@ public class PomReplacer {
     PROVIDER_POJO_DEPENDENCY.setArtifactId("provider-pojo");
   }
 
-  public static void migrateDubboToServiceComb(String pomXmlFileName) throws IOException, XmlPullParserException {
+  public static void migrateDubboToServiceComb(String pomXmlFileName) {
     Model model;
     try (Reader reader = new FileReader(pomXmlFileName)) {
       model = retrieveMavenModelAfterReplacement(reader);
+    } catch (IOException | XmlPullParserException e) {
+      System.out.println("error parsing pom file, filename: " + pomXmlFileName);
+      return;
     }
 
     if (model == null) {
@@ -62,6 +65,8 @@ public class PomReplacer {
     MavenXpp3Writer xpp3Writer = new MavenXpp3Writer();
     try (Writer writer = new FileWriter(pomXmlFileName)) {
       xpp3Writer.write(writer, model);
+    } catch (IOException e) {
+      System.out.println("error overwriting pom file, filename: " + pomXmlFileName);
     }
   }
 
