@@ -51,18 +51,17 @@ public class MainReplacer {
             if (mainrow != -1) {
                 if (r.contains("ApplicationContext") || r.contains("ClassPathXmlApplicationContext")) {
                     rows[i] = "\n";
-                }
-                //delete all annotation of line i
-                Stack<String> stack = new Stack<String>();
-                for(int j=i-1;j>mainrow;j--){
-                    if (!rows[j].endsWith(";") && !rows[j].startsWith("@")){
-                        rows[j] = "\n";
-                    }
-                    if(rows[j].startsWith("@")){
-                        rows[j] = "\n";
-                        break;
+                    for(int j=i-1;j>mainrow;j--){
+                        if (!rows[j].endsWith(";") && !rows[j].startsWith("@")){
+                            rows[j] = "\n";
+                        }
+                        if(rows[j].startsWith("@")){
+                            rows[j] = "\n";
+                            break;
+                        }
                     }
                 }
+
             }
         }
 
