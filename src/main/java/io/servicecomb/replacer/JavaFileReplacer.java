@@ -191,26 +191,13 @@ public class JavaFileReplacer {
         File file = new File(f);
         BufferedReader reader = null;
         StringBuffer sb = new StringBuffer();
-        boolean inMainFuction = false;
         try {
             reader = new BufferedReader(new FileReader(file));
             String fileRow = null;
             while ((fileRow = reader.readLine()) != null) {
-                if (fileRow.startsWith("import")) {
-                    importsStrs.add(fileRow);
-                }
-                if (fileRow.contains(mainStr)) {
-                    inMainFuction = true;
-                }
-                sb.append(fileRow);
-                sb.append("\n");
-                if (inMainFuction) {
-                    //delete all annotation
+               //replace context
 
-                    //replace context
 
-                    //replace future
-                }
             }
             reader.close();
             //only when isImportFind and isAnnoted find do the save work
@@ -222,6 +209,11 @@ public class JavaFileReplacer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void ConsumerCallingProviderReplacer(String code){
+        String[] rows = code.split("\n");
 
     }
 
