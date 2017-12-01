@@ -50,13 +50,11 @@ public class PomReplacer {
   }
 
   public static void convert(String pomXmlFileName) {
-    Model model;
-    try (Reader reader = new FileReader(pomXmlFileName)) {
-      model = retrieveMavenModelAfterReplacement(reader);
-    } catch (IOException | XmlPullParserException e) {
-      System.out.println("error parsing pom file, filename: " + pomXmlFileName);
+    Model model = retrieveModel(pomXmlFileName);
+    if (model == null) {
       return;
     }
+    model = retrieveMavenModelAfterReplacement(model);
 
     if (model == null) {
       System.out.println("error parsing pom file, filename: " + pomXmlFileName);
@@ -70,10 +68,7 @@ public class PomReplacer {
     }
   }
 
-  private static Model retrieveMavenModelAfterReplacement(Reader reader) throws IOException,
-      XmlPullParserException {
-    MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
-    Model model = xpp3Reader.read(reader);
+  private static Model retrieveMavenModelAfterReplacement(Model model) {
     List<Dependency> dependencyList = model.getDependencies();
     boolean hasRemoved = dependencyList.removeIf(dependency -> dependency.getArtifactId().equals(DUBBO_ARTIFACT_ID) &&
         dependency.getGroupId().equals(DUBBO_GROUP_ID));
@@ -95,6 +90,24 @@ public class PomReplacer {
     model.addDependency(PROVIDER_POJO_DEPENDENCY);
 
     return model;
+  }
+
+  public static String retrieveArtifactId(String pomXmlFileName) {
+    Model model = retrieveModel(pomXmlFileName);
+    if (model == null) {
+      return "";
+    }
+    return model.getArtifactId();
+  }
+
+  private static Model retrieveModel(String pomXmlFileName) {
+    try (Reader reader = new FileReader(pomXmlFileName)) {
+      MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
+      return xpp3Reader.read(reader);
+    } catch (IOException | XmlPullParserException e) {
+      System.out.println("error parsing pom file, filename: " + pomXmlFileName);
+      return null;
+    }
   }
 
   //TODO: regexp with dubbo literal
