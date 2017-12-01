@@ -39,6 +39,12 @@ public class MainReplacer {
             String r = rows[i];
             if (r.contains(JavaFileReplacer.mainStr)) {
                 //step into main
+                //deal exception
+                String rowStr = rows[i];
+
+                int startindex = rowStr.indexOf(")");
+                rowStr = rowStr.substring(0,startindex) + ") throws Exception {";
+                rows[i] = rowStr;
                 mainrow = i;
             }
             //ApplicationContext context = new ClassPathXmlApplicationContext("conf/applicationContext.xml");
@@ -67,4 +73,5 @@ public class MainReplacer {
         String replaced = filetool.PrintList(Arrays.asList(rows));
         filetool.SaveStringToFile(filepath, replaced);
     }
+    
 }
