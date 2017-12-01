@@ -11,6 +11,7 @@ import io.servicecomb.replacer.JavaFileReplacer;
 import io.servicecomb.utils.*;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import io.servicecomb.replacer.JavaFileReplacer;
 import io.servicecomb.replacer.PomReplacer;
 
 public class ConvertApplication {
