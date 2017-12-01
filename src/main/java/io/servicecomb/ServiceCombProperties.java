@@ -57,15 +57,15 @@ public class ServiceCombProperties {
   }
 
   public static class Cse {
-    private CseService service;
+    private CseService service_description;
     private CseRestAddress rest;
 
-    public CseService getService() {
-      return service;
+    public CseService getService_description() {
+      return service_description;
     }
 
-    public void setService(CseService service) {
-      this.service = service;
+    public void setService_description(CseService service_description) {
+      this.service_description = service_description;
     }
 
     public CseRestAddress getRest() {

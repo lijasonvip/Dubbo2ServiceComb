@@ -46,9 +46,9 @@ public class MicroserviceYamlGenerator {
     CseServiceRegistry cseServiceRegistry = new CseServiceRegistry();
     cseServiceRegistry.setAddress(DEFAULT_SERVICE_REGISTRY_ADDRESS);
     cseService.setRegistry(cseServiceRegistry);
-    cse.setService(cseService);
+    cse.setService_description(cseService);
 
-    if (dubboProperties.getPort() != null) {
+    if (dubboProperties.isProvider()) {
       CseRestAddress cseRestAddress = new CseRestAddress();
       cseRestAddress.setAddress("0.0.0.0:" + dubboProperties.getPort());
       cse.setRest(cseRestAddress);
