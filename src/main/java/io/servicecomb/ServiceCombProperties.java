@@ -2,7 +2,7 @@ package io.servicecomb;
 
 public class ServiceCombProperties {
   private String APPLICATION_ID;
-  private ServiceDefinition service;
+  private ServiceDefinition service_description;
 
   private Cse cse;
 
@@ -14,12 +14,12 @@ public class ServiceCombProperties {
     this.APPLICATION_ID = APPLICATION_ID;
   }
 
-  public ServiceDefinition getService() {
-    return service;
+  public ServiceDefinition getService_description() {
+    return service_description;
   }
 
-  public void setService(ServiceDefinition service) {
-    this.service = service;
+  public void setService_description(ServiceDefinition service_description) {
+    this.service_description = service_description;
   }
 
   public Cse getCse() {
@@ -57,15 +57,15 @@ public class ServiceCombProperties {
   }
 
   public static class Cse {
-    private CseService service_description;
+    private CseService service;
     private CseRestAddress rest;
 
-    public CseService getService_description() {
-      return service_description;
+    public CseService getService() {
+      return service;
     }
 
-    public void setService_description(CseService service_description) {
-      this.service_description = service_description;
+    public void setService(CseService service) {
+      this.service = service;
     }
 
     public CseRestAddress getRest() {
