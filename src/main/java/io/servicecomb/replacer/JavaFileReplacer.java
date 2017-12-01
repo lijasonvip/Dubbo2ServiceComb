@@ -13,7 +13,6 @@ import java.util.Stack;
 
 public class JavaFileReplacer {
     //tool class to dead java files
-
     public static final String importDubboServiceStr = "import com.alibaba.dubbo.config.annotation.Service;";
     public static final String dubboServiceAnnotStr = "@Service";
     public static final String importSCRpcSchemaStr = "import io.servicecomb.provider.pojo.RpcSchema;";
@@ -46,7 +45,6 @@ public class JavaFileReplacer {
         //replace second
         File file = new File(f);
         BufferedReader reader = null;
-        StringBuffer sb = new StringBuffer();
         try {
             reader = new BufferedReader(new FileReader(file));
             String fileRow = null;
@@ -74,6 +72,7 @@ public class JavaFileReplacer {
                     replacerJavaType.setGetBeanFild(true);
                 }
             }
+            reader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,153 +82,26 @@ public class JavaFileReplacer {
     public void ReplaceStarter(String f, ReplacerJavaType replacerJavaType) {
         if (replacerJavaType.isServiceImportFind() && replacerJavaType.isServiceAnnoted()) {
             //Service type
-            ReplaceServiceType(f, replacerJavaType);
+            ServiceToScheme sts = new ServiceToScheme();
+            sts.ServiceTypeReplacer(f);
         }
 
-        if (replacerJavaType.isMainFind() && !replacerJavaType.isGetBeanFild()) {
-            //consumer main type
-            ReplaceProviderMainType(f, replacerJavaType);
+        if (replacerJavaType.isMainFind()) {
+            MainReplacer mr = new MainReplacer();
+            mr.ReplaceMainEntrance(f);
         }
 
-        if (replacerJavaType.isBeanUtilFind() && replacerJavaType.isLogUtilFind() && replacerJavaType.isMainFind() && !replacerJavaType.isGetBeanFild()) {
-            //provider main type
-            ReplaceConsumerMainType(f, replacerJavaType);
+        if (replacerJavaType.isGetBeanFild()) {
+            ConsumeProvidedService cps = new ConsumeProvidedService();
+            cps.ConsumerCallingProviderReplacer(f);
         }
-
-    }
-
-    public void ReplaceServiceType(String f, ReplacerJavaType replacerJavaType) {
-        File file = new File(f);
-        BufferedReader reader = null;
-        StringBuffer sb = new StringBuffer();
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            String fileRow = null;
-            while ((fileRow = reader.readLine()) != null) {
-                if (fileRow.contains(importDubboServiceStr)) {
-                    fileRow = importSCRpcSchemaStr;
-                }
-
-                if (!fileRow.startsWith("/") && fileRow.contains(dubboServiceAnnotStr)) {
-                    //TODO:need schemaID here
-                    fileRow = SCRpcSchemaAnnotStr;
-                }
-
-                sb.append(fileRow);
-                sb.append("\n");
-            }
-            reader.close();
-            //only when isImportFind and isAnnoted find do the save work
-            //if main, main content need to replace too
-            PrintWriter printWriter = new PrintWriter(f);
-            printWriter.write(sb.toString().toCharArray());
-            printWriter.flush();
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void ReplaceProviderMainType(String f, ReplacerJavaType replacerJavaType) {
-        File file = new File(f);
-        BufferedReader reader = null;
-        StringBuffer sb = new StringBuffer();
-        boolean inMainFuction = false;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            String fileRow = null;
-            while ((fileRow = reader.readLine()) != null) {
-                if (fileRow.contains(DubboApplicationCtxImport)) {
-                    fileRow = SCBeanUtilsImport;
-                }
-                if (fileRow.contains(DubboClassPathXmlAppCtxImport)) {
-                    fileRow = SCLogUtilImport;
-                }
-                if (fileRow.contains(mainStr)) {
-                    inMainFuction = true;
-                }
-                sb.append(fileRow);
-                sb.append("\n");
-                if (inMainFuction) {
-                    //readline to main
-                    //use stack to find } to mach { in main line
-                    Stack<String> stack = new Stack<String>();
-                    stack.push("{");
-                    while ((fileRow = reader.readLine()) != null) {
-                        stack = findMainEnd(stack, fileRow);
-                        if (!stack.isEmpty()) {
-                            continue;
-                        } else {
-                            sb.append(SCLogUtilInit);
-                            sb.append("\n");
-                            sb.append(SCBeanUtilInit);
-                            sb.append("\n");
-                            sb.append("}\n");
-                            break;
-                        }
-                    }
-                }
-            }
-            reader.close();
-            //only when isImportFind and isAnnoted find do the save work
-            //if main, main content need to replace too
-            PrintWriter printWriter = new PrintWriter(f);
-            printWriter.write(sb.toString().toCharArray());
-            printWriter.flush();
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void ReplaceConsumerMainType(String f, ReplacerJavaType replacerJavaType) {
-        //replace before getBean with util.init
-        //Get object getBean returned and replace with SC object
-        //user CompletableFuture to call provider service
-        Files filetools = new Files();
-        ConsumeProvidedService cs = new ConsumeProvidedService();
-        String code = filetools.getFileContentAsString(f);
-        String replaced = cs.ConsumerCallingProviderReplacer(code);
-        PrintWriter printWriter = null;
-        try {
-            printWriter = new PrintWriter(f);
-            printWriter.write(replaced);
-            printWriter.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        printWriter.close();
-
-    }
-
-
-
-    public Stack<String> findMainEnd(Stack<String> stack, String str) {
-        if (!str.contains("{") && !str.contains("}"))
-            return stack;
-        else {
-            char[] chars = str.toCharArray();
-            for (char c : chars) {
-                if (c == '{') {
-                    stack.push("{");
-                } else if (c == '}') {
-                    if (!stack.isEmpty()) {
-                        stack.pop();
-                    }
-                }
-            }
-        }
-        return stack;
     }
 
     public static void main(String[] args) {
         JavaFileReplacer jfr = new JavaFileReplacer();
         List<String> files = new ArrayList<String>();
         files.add("/home/bo/workspace/dubbo-example/dubbo-sample/dubbo-consumer/src/main/java/io/servicecomb/demo/consumer/ConsumerMain.java");
-//        files.add("/home/bo/workspace/dubbo-example/dubbo-sample/dubbo-provider/src/main/java/io/servicecomb/demo/provider/ProviderMain.java");
         jfr.ReadJavaFile(files);
 
     }
-
-
 }

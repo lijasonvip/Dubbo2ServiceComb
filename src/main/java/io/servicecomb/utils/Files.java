@@ -2,6 +2,7 @@ package io.servicecomb.utils;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Files {
@@ -70,8 +71,30 @@ public class Files {
         return sb.toString();
     }
 
+    public String PrintList(List<String> input){
+        StringBuffer sb = new StringBuffer();
+        for (String s : input) {
+            sb.append(s).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public void SaveStringToFile(String filepath, String code){
+        File f = new File(filepath);
+        PrintWriter printWriter = null;
+        try {
+            printWriter = new PrintWriter(f);
+            printWriter.write(code);
+            printWriter.flush();
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         Files fs = new Files();
-        fs.traverseFolder("/home/bo/workspace/dubbo-example");
+        List<String> test = Arrays.asList(new String[]{"asd", "dafd", "dsfasdf","hello world"});
+        System.out.println(fs.PrintList(test));
     }
 }
