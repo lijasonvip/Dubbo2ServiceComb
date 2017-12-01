@@ -2,6 +2,7 @@ package io.servicecomb.replacer;
 
 import com.sun.prism.impl.packrect.RectanglePacker;
 import com.sun.xml.internal.ws.wsdl.writer.document.Import;
+import io.servicecomb.utils.Files;
 import io.servicecomb.utils.ReplacerJavaType;
 
 import javax.swing.*;
@@ -185,37 +186,23 @@ public class JavaFileReplacer {
         //replace before getBean with util.init
         //Get object getBean returned and replace with SC object
         //user CompletableFuture to call provider service
-        boolean inMainFunction = false;
-        List<String> importsStrs = new ArrayList<String>(); //delete Future and ClassPathXmlApplicationContext
-
-        File file = new File(f);
-        BufferedReader reader = null;
-        StringBuffer sb = new StringBuffer();
+        Files filetools = new Files();
+        ConsumeProvidedService cs = new ConsumeProvidedService();
+        String code = filetools.getFileContentAsString(f);
+        String replaced = cs.ConsumerCallingProviderReplacer(code);
+        PrintWriter printWriter = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
-            String fileRow = null;
-            while ((fileRow = reader.readLine()) != null) {
-               //replace context
-
-
-            }
-            reader.close();
-            //only when isImportFind and isAnnoted find do the save work
-            //if main, main content need to replace too
-            PrintWriter printWriter = new PrintWriter(f);
-            printWriter.write(sb.toString().toCharArray());
+            printWriter = new PrintWriter(f);
+            printWriter.write(replaced);
             printWriter.flush();
-            printWriter.close();
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        printWriter.close();
 
     }
 
-    public void ConsumerCallingProviderReplacer(String code){
-        String[] rows = code.split("\n");
 
-    }
 
     public Stack<String> findMainEnd(Stack<String> stack, String str) {
         if (!str.contains("{") && !str.contains("}"))

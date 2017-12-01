@@ -6,10 +6,10 @@ import java.util.List;
 
 import io.servicecomb.replacer.PomReplacer;
 
-public class ProjectManager {
+public class FileManager {
   private List<File> todoDirectories = new ArrayList<>();
 
-  public ProjectManager(String directoryPath) {
+  public FileManager(String directoryPath) {
     init(directoryPath);
   }
 

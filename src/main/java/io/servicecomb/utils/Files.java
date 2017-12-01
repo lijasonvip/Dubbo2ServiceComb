@@ -1,6 +1,6 @@
 package io.servicecomb.utils;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +33,24 @@ public class Files {
                 }
             }
         }
+    }
+
+    public String getFileContentAsString(String filepath){
+        File file = new File(filepath);
+        BufferedReader reader = null;
+        StringBuffer sb = new StringBuffer();
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String fileRow = null;
+            while ((fileRow = reader.readLine()) != null) {
+                sb.append(fileRow);
+                sb.append("\n");
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) {
