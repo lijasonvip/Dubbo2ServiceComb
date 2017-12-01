@@ -3,7 +3,9 @@ package io.servicecomb.replacer;
 import io.servicecomb.utils.Files;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ConsumeProvidedService {
 
@@ -13,9 +15,10 @@ public class ConsumeProvidedService {
         String[] rows = code.split("\n");
         for (int i = 0; i < rows.length; i++) {
             String s = rows[i];
-            if (s.contains(JavaFileReplacer.DubboApplicationCtxImport) || s.contains(JavaFileReplacer.DubboClassPathXmlAppCtxImport)) {
-                rows[i] = "\n";
-            }
+            //not necessary
+//            if (s.contains(JavaFileReplacer.DubboApplicationCtxImport) || s.contains(JavaFileReplacer.DubboClassPathXmlAppCtxImport)) {
+//                rows[i] = "\n";
+//            }
 
             //delete import com.alibaba.dubbo.rpc.RpcContext; this kind of import not suppose to be here, just in case.
             if (s.contains("com.alibaba.")) {
@@ -23,14 +26,16 @@ public class ConsumeProvidedService {
             }
 
             //get bean
+            Set<String> set = new HashSet<>();
             if (s.contains(JavaFileReplacer.getBeanStr)) {
                 String context = getContext(s);
-                //replace context with Beanuitls and replace its defination
-                //SomeService someService = (SomeService) context.getBean("someServiceRef");
-                int index = s.indexOf(JavaFileReplacer.getBeanStr);
-                String tmp = s.replace(context, "BeanUtils");
-                rows[i] = tmp;
-
+                if (set.contains(context)){
+                    continue;
+                }else{
+                    set.add(context);
+                    String tmp = "ApplicationContext " + context + " = BeanUtils.getContext();\n" + s;
+                    rows[i] = tmp;
+                }
             }
             //consider if return needed
         }

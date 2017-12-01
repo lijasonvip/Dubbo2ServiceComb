@@ -3,6 +3,7 @@ package io.servicecomb.replacer;
 import io.servicecomb.utils.Files;
 
 import java.util.Arrays;
+import java.util.Stack;
 
 public class MainReplacer {
 
@@ -41,8 +42,21 @@ public class MainReplacer {
                 mainrow = i;
             }
             //ApplicationContext context = new ClassPathXmlApplicationContext("conf/applicationContext.xml");
-            if (r.contains("ApplicationContext") || r.contains("ClassPathXmlApplicationContext")) {
-                rows[i] = "\n";
+            if (mainrow != -1) {
+                if (r.contains("ApplicationContext") || r.contains("ClassPathXmlApplicationContext")) {
+                    rows[i] = "\n";
+                }
+                //delete all annotation of line i
+                Stack<String> stack = new Stack<String>();
+                for(int j=i-1;j>mainrow;j--){
+                    if (!rows[j].endsWith(";") && !rows[j].startsWith("@")){
+                        rows[j] = "\n";
+                    }
+                    if(rows[j].startsWith("@")){
+                        rows[j] = "\n";
+                        break;
+                    }
+                }
             }
         }
 
