@@ -29,13 +29,9 @@ public class ConsumeProvidedService {
             Set<String> set = new HashSet<>();
             if (s.contains(JavaFileReplacer.getBeanStr)) {
                 String context = getContext(s);
-                if (set.contains(context)){
-                    continue;
-                }else{
-                    set.add(context);
-                    String tmp = "ApplicationContext " + context + " = BeanUtils.getContext();\n" + s;
-                    rows[i] = tmp;
-                }
+                int index = s.indexOf(JavaFileReplacer.getBeanStr);
+                String tmp = s.replace(context, "BeanUtils");
+                rows[i] = tmp;
             }
             //consider if return needed
         }

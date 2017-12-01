@@ -21,7 +21,7 @@ import io.servicecomb.utils.XmlGenerator;
 public class ConvertApplication {
 
     public static void main(String[] args) throws IOException, XmlPullParserException {
-        DirectoryManager directoryManager = new DirectoryManager("/tmp/dubbo-to-servicecomb/dubbo-sample");
+        DirectoryManager directoryManager = new DirectoryManager("/home/bo/workspace/dubbo-example/dubbo-sample");
 
         Queue<File> todoDirectories = new ConcurrentLinkedQueue<>(directoryManager.getTodoDirectories());
         while (!todoDirectories.isEmpty()) {
