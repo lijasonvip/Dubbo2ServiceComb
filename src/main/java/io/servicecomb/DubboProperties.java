@@ -28,6 +28,8 @@ public class DubboProperties {
 
   private boolean isSatisfiedConsumer;
 
+  private boolean isValidDubboPropertyFile = true;
+
   public DubboProperties(String dubboPropertyFileName) {
     load(dubboPropertyFileName);
   }
@@ -44,6 +46,10 @@ public class DubboProperties {
       Document document = documentBuilder.parse(dubboFile);
       document.getDocumentElement().normalize();
       application = retrieveDubboAttribute(document, "dubbo:application", "name");
+      if (application == null) {
+        isValidDubboPropertyFile = false;
+        return;
+      }
       port = retrieveDubboAttribute(document, "dubbo:protocol", "port");
       NodeList serviceNodeList = document.getElementsByTagName("dubbo:service");
       if (serviceNodeList.getLength() > 0) {
@@ -84,14 +90,19 @@ public class DubboProperties {
       }
 
       isSatisfiedConsumer = true;
-      for (Reference reference : references) {
-        if (ProviderInfo.getMicroserviceNameByInterface(reference.getInterfaceName()) == null) {
-          isSatisfiedConsumer = false;
-          break;
+      if (references != null) {
+        for (Reference reference : references) {
+          if (ProviderInfo.getMicroserviceNameByInterface(reference.getInterfaceName()) == null) {
+            isSatisfiedConsumer = false;
+            break;
+          }
         }
+      } else {
+//        isSatisfiedConsumer = true;
       }
     } catch (ParserConfigurationException | SAXException | IOException e) {
       System.out.println("Unable to parse dubbo property file");
+      isValidDubboPropertyFile = false;
     }
   }
 
@@ -147,6 +158,10 @@ public class DubboProperties {
 
   public boolean isSatisfiedConsumer() {
     return isSatisfiedConsumer;
+  }
+
+  public boolean isValidDubboPropertyFile() {
+    return isValidDubboPropertyFile;
   }
 
   public class Service {
