@@ -1,1 +1,1 @@
-# dubbo2servicecomb
+# x2servicecomb

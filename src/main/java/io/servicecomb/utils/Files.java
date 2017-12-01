@@ -9,6 +9,23 @@ public class Files {
     //list all file recursively and return java file list and xml file list seperately
 
     public List<String> javaFiles = new ArrayList<String>();
+
+    public List<String> getJavaFiles() {
+        return javaFiles;
+    }
+
+    public void setJavaFiles(List<String> javaFiles) {
+        this.javaFiles = javaFiles;
+    }
+
+    public List<String> getXmlFiles() {
+        return xmlFiles;
+    }
+
+    public void setXmlFiles(List<String> xmlFiles) {
+        this.xmlFiles = xmlFiles;
+    }
+
     public List<String> xmlFiles = new ArrayList<String>();
 
     public void traverseFolder(String path) {
