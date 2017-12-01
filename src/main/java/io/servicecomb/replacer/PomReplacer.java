@@ -49,7 +49,7 @@ public class PomReplacer {
     PROVIDER_POJO_DEPENDENCY.setArtifactId("provider-pojo");
   }
 
-  public static void migrateDubboToServiceComb(String pomXmlFileName) {
+  public static void convert(String pomXmlFileName) {
     Model model;
     try (Reader reader = new FileReader(pomXmlFileName)) {
       model = retrieveMavenModelAfterReplacement(reader);
@@ -75,10 +75,18 @@ public class PomReplacer {
     MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
     Model model = xpp3Reader.read(reader);
     List<Dependency> dependencyList = model.getDependencies();
-    dependencyList.removeIf(dependency -> dependency.getArtifactId().equals(DUBBO_ARTIFACT_ID) &&
+    boolean hasRemoved = dependencyList.removeIf(dependency -> dependency.getArtifactId().equals(DUBBO_ARTIFACT_ID) &&
         dependency.getGroupId().equals(DUBBO_GROUP_ID));
 
+    // no dubbo dependencies, no need to replace
+    if (!hasRemoved) {
+      return model;
+    }
+
     DependencyManagement dependencyManagement = model.getDependencyManagement();
+    if (dependencyManagement == null) {
+      dependencyManagement = new DependencyManagement();
+    }
     dependencyManagement.addDependency(JAVA_CHASSIS_DEPENDENCIES_DEPENDENCY);
     model.setDependencyManagement(dependencyManagement);
 
