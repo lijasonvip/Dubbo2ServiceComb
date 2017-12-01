@@ -9,6 +9,8 @@ import io.servicecomb.replacer.PomReplacer;
 public class DirectoryManager {
   private List<File> todoDirectories = new ArrayList<>();
 
+  private String artifactId;
+
   public DirectoryManager(String directoryPath) {
     init(directoryPath);
   }
@@ -28,7 +30,9 @@ public class DirectoryManager {
         todoDirectories.add(file);
       } else {
         if (file.getName().equals("pom.xml")) {
-          PomReplacer.convert(file.getAbsolutePath());
+          String pomAbsolutePath = file.getAbsolutePath();
+          PomReplacer.convert(pomAbsolutePath);
+          artifactId = PomReplacer.retrieveArtifactId(pomAbsolutePath);
         }
       }
     }
@@ -36,5 +40,9 @@ public class DirectoryManager {
 
   public List<File> getTodoDirectories() {
     return todoDirectories;
+  }
+
+  public String getArtifactId() {
+    return artifactId;
   }
 }

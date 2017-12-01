@@ -97,8 +97,6 @@ public class DubboProperties {
             break;
           }
         }
-      } else {
-//        isSatisfiedConsumer = true;
       }
     } catch (ParserConfigurationException | SAXException | IOException e) {
       System.out.println("Unable to parse dubbo property file");

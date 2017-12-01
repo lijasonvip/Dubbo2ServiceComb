@@ -1,16 +1,11 @@
 package io.servicecomb;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -18,14 +13,15 @@ import io.servicecomb.replacer.PomReplacer;
 import io.servicecomb.utils.DirectoryManager;
 import io.servicecomb.utils.FileManager;
 import io.servicecomb.utils.FileUtils;
+import io.servicecomb.utils.JavaParseUtils;
 import io.servicecomb.utils.MicroserviceYamlGenerator;
 import io.servicecomb.utils.XmlGenerator;
 
 public class ConvertApplication {
+
   public static void main(String[] args) throws IOException, XmlPullParserException {
     DirectoryManager directoryManager = new DirectoryManager("/tmp/dubbo-sample");
 
-//    List<File> todoDirectories = directoryManager.getTodoDirectories();
     Queue<File> todoDirectories = new ConcurrentLinkedQueue<>(directoryManager.getTodoDirectories());
     while (!todoDirectories.isEmpty()) {
       File dir = todoDirectories.poll();
@@ -53,9 +49,8 @@ public class ConvertApplication {
             if (dubboProperties.isValidDubboPropertyFile() && dubboProperties.isSatisfiedConsumer()) {
               xmlFilesIterator.remove();
               String resourcePath = FileUtils.getResourcePath(xmlFileName);
-              // TODO: how to set up application id?
               MicroserviceYamlGenerator
-                  .generate(resourcePath, "applicationId", dubboProperties);
+                  .generate(resourcePath, directoryManager.getArtifactId(), dubboProperties);
               XmlGenerator.generate(resourcePath, dubboProperties);
               providerName = dubboProperties.getApplication();
             }
@@ -68,59 +63,10 @@ public class ConvertApplication {
             continue;
           }
 
+          // register interface to provider first to make Service annotation work
           List<String> allJavaFiles = fileManager.getAllJavaFiles();
           for (String javaFile : allJavaFiles) {
-            File java = new File(javaFile);
-            List<String> importStatements = new ArrayList<>();
-            String packageName = null;
-            boolean isService = false;
-            try {
-              BufferedReader reader = new BufferedReader(new FileReader(java));
-              String row;
-              while ((row = reader.readLine()) != null) {
-                if (row.startsWith("package")) {
-                  Pattern packagePattern = Pattern.compile("package\\s+([a-zA-Z0-9][\\.\\w]*);");
-                  Matcher packageMatcher = packagePattern.matcher(row);
-                  if (packageMatcher.find()) {
-                    packageName = packageMatcher.group(1);
-                  }
-                } else if (row.startsWith("import")) {
-                  importStatements.add(row);
-                } else if (row.contains("@Service")) {
-                  isService = true;
-                }
-                if (row.contains("implement")) {
-                  if (!isService) {
-                    break;
-                  }
-                  Pattern pattern = Pattern.compile("implements\\s+([a-zA-Z0-9]+?)\\s+\\{");
-                  Matcher matcher = pattern.matcher(row);
-                  String interfaceName = null;
-                  if (matcher.find()) {
-                    interfaceName = matcher.group(1);
-                  }
-                  boolean isSamePackage = true;
-                  String fullInterfaceName = null;
-                  for (String importStatement : importStatements) {
-                    if (importStatement.endsWith(interfaceName + ";")) {
-                      Pattern importPattern = Pattern.compile("import\\s+([a-zA-Z0-9\\.]+?);");
-                      Matcher importMatcher = importPattern.matcher(importStatement);
-                      if (importMatcher.find()) {
-                        fullInterfaceName = importMatcher.group(1);
-                      }
-                      isSamePackage = false;
-                    }
-                  }
-                  if (isSamePackage) {
-
-                    fullInterfaceName = packageName + "." + interfaceName;
-                  }
-                  ProviderInfo.addProviderInfo(fullInterfaceName, providerName);
-                }
-              }
-            } catch (IOException e) {
-              System.out.println("Error processing files, " + e);
-            }
+            JavaParseUtils.registerInterfaceToProvider(providerName, javaFile);
           }
           // TODO: parse java file
 
