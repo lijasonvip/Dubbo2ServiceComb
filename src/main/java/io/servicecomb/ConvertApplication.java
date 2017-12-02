@@ -40,7 +40,7 @@ public class ConvertApplication {
 
         DirectoryManager directoryManager = new DirectoryManager(default_transfe_path);
 
-
+        System.out.println("--- Begin to transfer dubbo project to ServiceComb project");
         Queue<File> todoDirectories = new ConcurrentLinkedQueue<>(directoryManager.getTodoDirectories());
         while (!todoDirectories.isEmpty()) {
             File dir = todoDirectories.poll();
@@ -96,5 +96,6 @@ public class ConvertApplication {
                 }
             }
         }
+        System.out.println("--- Congratulations! All transfering job is Done!");
     }
 }

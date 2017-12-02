@@ -34,9 +34,9 @@ public class JavaFileReplacer {
         for (String f : files) {
             ReplacerJavaType r = MarkReplaceType(f);
             ReplaceStarter(f, r);
-            System.out.println("replacing " + f);
+            System.out.println("--- Transfering: " + f);
+            System.out.println("--- Success!");
         }
-        System.out.println("done");
     }
 
     public ReplacerJavaType MarkReplaceType(String f) {

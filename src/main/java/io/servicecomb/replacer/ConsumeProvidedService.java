@@ -22,12 +22,14 @@ public class ConsumeProvidedService {
 
             //delete import com.alibaba.dubbo.rpc.RpcContext; this kind of import not suppose to be here, just in case.
             if (s.contains("com.alibaba.")) {
+                System.out.println("------ dealing with: "+s);
                 rows[i] = "\n";
             }
 
             //get bean
             Set<String> set = new HashSet<>();
             if (s.contains(JavaFileReplacer.getBeanStr)) {
+                System.out.println("------ dealing with: "+s);
                 String context = getContext(s);
                 int index = s.indexOf(JavaFileReplacer.getBeanStr);
                 String tmp = s.replace(context, "BeanUtils");

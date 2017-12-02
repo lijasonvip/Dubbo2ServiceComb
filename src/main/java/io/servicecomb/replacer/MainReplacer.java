@@ -16,9 +16,11 @@ public class MainReplacer {
         for (int i = 0; i < rows.length; i++) {
             String r = rows[i];
             if (r.contains(JavaFileReplacer.DubboApplicationCtxImport)) {
+                System.out.println("------ dealing with: "+r);
                 rows[i] = "\n";
             }
             if (r.contains(JavaFileReplacer.DubboClassPathXmlAppCtxImport)) {
+                System.out.println("------ dealing with: "+r);
                 rows[i] = "\n";
             }
 
@@ -27,6 +29,7 @@ public class MainReplacer {
         for (int i = 0; i < rows.length; i++) {
             String r = rows[i];
             if (r.startsWith("import")) {
+                System.out.println("------ dealing with: "+r);
                 rows[i] = JavaFileReplacer.SCLogUtilImport + "\n" + JavaFileReplacer.SCBeanUtilsImport + "\n";
                 //make sure scimport only been imported once
                 break;
@@ -38,6 +41,7 @@ public class MainReplacer {
         for (int i = 0; i < rows.length; i++) {
             String r = rows[i];
             if (r.contains(JavaFileReplacer.mainStr)) {
+                System.out.println("------ dealing with: "+r);
                 //step into main
                 //deal exception
                 String rowStr = rows[i];
@@ -50,6 +54,7 @@ public class MainReplacer {
             //ApplicationContext context = new ClassPathXmlApplicationContext("conf/applicationContext.xml");
             if (mainrow != -1) {
                 if (r.contains("ApplicationContext") || r.contains("ClassPathXmlApplicationContext")) {
+                    System.out.println("------ dealing with: "+r);
                     rows[i] = "\n";
                     for(int j=i-1;j>mainrow;j--){
                         if (!rows[j].endsWith(";") && !rows[j].startsWith("@")){

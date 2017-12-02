@@ -27,9 +27,11 @@ public class ServiceToScheme {
         for(int i=0;i<rows.length;i++){
             String r = rows[i];
             if (r.contains(JavaFileReplacer.importDubboServiceStr)){
+                System.out.println("------ dealing with: "+r);
                 rows[i] = JavaFileReplacer.importSCRpcSchemaStr;
             }
             if (r.contains(JavaFileReplacer.dubboServiceAnnotStr)){
+                System.out.println("------ dealing with: "+r);
                 rows[i] = MakeSchemeAnnot(schemeId);
             }
         }
