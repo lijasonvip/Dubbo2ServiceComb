@@ -109,7 +109,7 @@ public class PomReplacer {
     Repository repository = new Repository();
     repository.setId("huawei_cloud_cse_dependencies");
     repository.setName("huawei_cloud_cse_dependencies");
-    repository.setUrl("http://117.78.31.114:32700/nexus/content/repositories/cse");
+    repository.setUrl("http://maven.huaweicse.com/nexus/content/groups/public/");
     RepositoryPolicy repositoryPolicy = new RepositoryPolicy();
     repositoryPolicy.setEnabled(true);
     repository.setReleases(repositoryPolicy);
