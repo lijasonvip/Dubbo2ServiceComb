@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dubbo-consumer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: dubbo-consumer
+    spec:
+      containers:
+      - env:
+        - name: JAR_NAME
+          value: dubbo-consumer-0.4.1-SNAPSHOT
+        - name: JAVA_OPTS
+          value: -Dcse.service.registry.address=http://10.229.42.155:30100
+        image: 10.229.40.121:8082/x2servicecomb/dubbo-test:latest
+        name: dubbo-consumer
+        ports:
+        - containerPort: 20880

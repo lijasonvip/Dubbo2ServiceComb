@@ -1,0 +1,62 @@
+uri: x2servicecomb/dubbo/convert-build-deploy
+title: Workflow for x2servicecomb
+version: 1
+tag: latest
+timeout: 0
+stages:
+  -
+    type: start
+    name: start
+    title: Start
+  -
+    type: normal
+    name: x2servicecomb-convert-build-deploy
+    title: Convert, build and deploy dubbo offical sample
+    sequencing: sequence
+    actions:
+      -
+        name: convert-dubbo-example
+        title: convert dubbo-example
+        jobs:
+          -
+            type: component
+            endpoint: 10.229.40.121:8082/system/x2servicecomb:v0.6
+            resources:
+              cpu: 1
+              memory: 1G
+            timeout: 0
+            environments:
+              - CO_DATA: "git-url=https://github.com/lijasonvip/dubbo-sample.git targetrepo=https://github.com/lijasonvip/x2servicecomb-result.git username=lijasonvip password=statham123"
+      -
+        name: build-release-dubbo-example
+        title: release dubbo-example image to huawei cloud
+        jobs:
+          -
+            type: component
+            endpoint: 10.229.40.121:8082/system/call-assembling-manven:v0.7
+            resources:
+              cpu: 1
+              memory: 1G
+            timeout: 0
+            environments:
+              - CO_DATA: "git-url=https://github.com/lijasonvip/x2servicecomb-result.git assembling-url=https://10.229.40.121:8083 registry-url=10.229.40.121:8082 namespace=x2servicecomb image=dubbo-test tag=latest insecure-registry=10.229.40.121:8082"
+      -
+        name: deploy-dubbo-example-provider
+        title: Deploy dubbo-example-provider
+        jobs:
+          -
+            name: dubbo-provider
+            type: component
+            kubectl: /root/gopath/src/github.com/Huawei/containerops/demo/serviceComb/dubbo-examples/dubbo-provider-deployment.yaml
+      -
+        name: deploy-dubbo-example-consumer
+        title: Deploy dubbo-example-consumer
+        jobs:
+          -
+            name: dubbo-consumer
+            type: component
+            kubectl: /root/gopath/src/github.com/Huawei/containerops/demo/serviceComb/dubbo-examples/dubbo-consumer-deployment.yaml
+  -
+    type: end
+    name: end
+    title: End
