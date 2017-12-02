@@ -5,11 +5,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
+import org.apache.maven.model.Repository;
+import org.apache.maven.model.RepositoryPolicy;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -89,7 +93,41 @@ public class PomReplacer {
     model.addDependency(TRANSPORT_REST_VERTX_DEPENDENCY);
     model.addDependency(PROVIDER_POJO_DEPENDENCY);
 
+    List<Profile> profiles = model.getProfiles();
+    if (profiles == null) {
+      profiles = new ArrayList<>();
+    }
+    Profile huaweiCloudProfile = getHuaweiCloudProfile();
+    profiles.add(huaweiCloudProfile);
+    model.setProfiles(profiles);
     return model;
+  }
+
+  private static Profile getHuaweiCloudProfile() {
+    Profile huaweiCloudProfile = new Profile();
+    huaweiCloudProfile.setId("HuaweiCloud");
+    Repository repository = new Repository();
+    repository.setId("huawei_cloud_cse_dependencies");
+    repository.setName("huawei_cloud_cse_dependencies");
+    repository.setUrl("http://117.78.31.114:32700/nexus/content/repositories/cse");
+    RepositoryPolicy repositoryPolicy = new RepositoryPolicy();
+    repositoryPolicy.setEnabled(true);
+    repository.setReleases(repositoryPolicy);
+    RepositoryPolicy snapshotPolicy = new RepositoryPolicy();
+    snapshotPolicy.setEnabled(false);
+    repository.setSnapshots(snapshotPolicy);
+    List<Repository> repositories = new ArrayList<>();
+    repositories.add(repository);
+    huaweiCloudProfile.setPluginRepositories(repositories);
+    huaweiCloudProfile.setRepositories(repositories);
+    List<Dependency> huaweiCloudDependencies = new ArrayList<>();
+    Dependency huaweiCloudDependency = new Dependency();
+    huaweiCloudDependency.setGroupId("com.huawei.paas.cse");
+    huaweiCloudDependency.setArtifactId("cse-solution-service-engine");
+    huaweiCloudDependency.setVersion("2.2.7");
+    huaweiCloudDependencies.add(huaweiCloudDependency);
+    huaweiCloudProfile.setDependencies(huaweiCloudDependencies);
+    return huaweiCloudProfile;
   }
 
   public static String retrieveArtifactId(String pomXmlFileName) {
