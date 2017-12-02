@@ -52,9 +52,5 @@ public class ServiceToScheme {
         return "@RpcSchema(schemaId = \""+ schemaId + "\")";
     }
 
-    public static void main(String[] args) {
-        ServiceToScheme sts = new ServiceToScheme();
-        String row = "public class SomeServiceImpl implements SomeService {";
-        System.out.println(sts.MakeSchemeAnnot(sts.GetSchemeId(row)));
-    }
+
 }

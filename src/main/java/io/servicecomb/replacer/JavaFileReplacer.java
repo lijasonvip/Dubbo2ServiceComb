@@ -1,15 +1,10 @@
 package io.servicecomb.replacer;
 
-import com.sun.prism.impl.packrect.RectanglePacker;
-import com.sun.xml.internal.ws.wsdl.writer.document.Import;
-import io.servicecomb.utils.Files;
 import io.servicecomb.utils.ReplacerJavaType;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class JavaFileReplacer {
     //tool class to dead java files
@@ -97,11 +92,4 @@ public class JavaFileReplacer {
         }
     }
 
-    public static void main(String[] args) {
-        JavaFileReplacer jfr = new JavaFileReplacer();
-        List<String> files = new ArrayList<String>();
-        files.add("/home/bo/workspace/dubbo-example/dubbo-sample/dubbo-consumer/src/main/java/io/servicecomb/demo/consumer/ConsumerMain.java");
-        jfr.ReadJavaFile(files);
-
-    }
 }

@@ -47,8 +47,5 @@ public class FileManager {
         return allXmlFiles;
     }
 
-    public static void main(String[] args) {
-        FileManager fs = new FileManager("/home/bo/workspace/dubbo-example");
-//        fs.traverseFolder();
-    }
+
 }

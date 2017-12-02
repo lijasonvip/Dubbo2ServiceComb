@@ -92,9 +92,5 @@ public class Files {
         }
     }
 
-    public static void main(String[] args) {
-        Files fs = new Files();
-        List<String> test = Arrays.asList(new String[]{"asd", "dafd", "dsfasdf","hello world"});
-        System.out.println(fs.PrintList(test));
-    }
+
 }
