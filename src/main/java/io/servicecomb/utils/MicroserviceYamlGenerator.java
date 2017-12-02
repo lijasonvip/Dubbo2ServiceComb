@@ -23,7 +23,7 @@ import io.servicecomb.ServiceCombProperties.ServiceDefinition;
 public class MicroserviceYamlGenerator {
   private static final String MICROSERVICE_FILE_NAME = "microservice.yaml";
 
-  private static final String DEFAULT_SERVICE_REGISTRY_ADDRESS = "http://127.0.0.1:30100";
+  private String DEFAULT_SERVICE_REGISTRY_ADDRESS = "http://10.229.42.155:30100";
 
   private static final Representer representer = new Representer() {
     @Override
@@ -39,9 +39,9 @@ public class MicroserviceYamlGenerator {
   };
 
   public static void generate(String resourceLocation, String applicationId,
-      DubboProperties dubboProperties) throws IOException {
+      DubboProperties dubboProperties, String scaddress) throws IOException {
     ServiceCombProperties serviceCombProperties = convertDubboPropertiesToServiceCombProperties(applicationId,
-        dubboProperties);
+        dubboProperties, scaddress);
     try (Writer writer = new FileWriter(resourceLocation + "/" + MICROSERVICE_FILE_NAME)) {
       DumperOptions options = new DumperOptions();
       options.setDefaultFlowStyle(FlowStyle.BLOCK);
@@ -53,7 +53,7 @@ public class MicroserviceYamlGenerator {
 
 
   private static ServiceCombProperties convertDubboPropertiesToServiceCombProperties(String rootArtifactId,
-      DubboProperties dubboProperties) {
+      DubboProperties dubboProperties, String scaddress) {
     ServiceCombProperties serviceCombProperties = new ServiceCombProperties();
     serviceCombProperties.setAPPLICATION_ID(rootArtifactId);
 
@@ -63,7 +63,7 @@ public class MicroserviceYamlGenerator {
     Cse cse = new Cse();
     CseService cseService = new CseService();
     CseServiceRegistry cseServiceRegistry = new CseServiceRegistry();
-    cseServiceRegistry.setAddress(DEFAULT_SERVICE_REGISTRY_ADDRESS);
+    cseServiceRegistry.setAddress(scaddress);
     cseService.setRegistry(cseServiceRegistry);
     cse.setService(cseService);
 

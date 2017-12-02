@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -21,7 +22,24 @@ import io.servicecomb.utils.XmlGenerator;
 public class ConvertApplication {
 
     public static void main(String[] args) throws IOException, XmlPullParserException {
-        DirectoryManager directoryManager = new DirectoryManager("/home/bo/workspace/dubbo-example/dubbo-sample");
+        String default_transfe_path = "/home/bo/workspace/opensource/dubbo-to-servicecomb/transfer-demo";
+        String default_scaddress = "http://10.229.42.155:30100";
+        if (args.length > 0){
+            //if length is 1, set destination path
+            //if length si 2, set destination path and default service center address
+            if (args.length == 1){
+                default_transfe_path = (String) args[0];
+            }else if(args.length == 2){
+                default_transfe_path = (String) args[0];
+                default_scaddress = (String) args[1];
+            }else{
+                //log error
+            }
+
+        }
+
+        DirectoryManager directoryManager = new DirectoryManager(default_transfe_path);
+
 
         Queue<File> todoDirectories = new ConcurrentLinkedQueue<>(directoryManager.getTodoDirectories());
         while (!todoDirectories.isEmpty()) {
@@ -33,6 +51,9 @@ public class ConvertApplication {
             }
             for (File file : files) {
                 String providerName = null;
+                if (file.getName().contains("target")) {
+                    continue;
+                }
                 if (file.getName().equals("pom.xml")) {
                     PomReplacer.convert(file.getAbsolutePath());
                 } else {
@@ -51,7 +72,7 @@ public class ConvertApplication {
                             xmlFilesIterator.remove();
                             String resourcePath = FileUtils.getResourcePath(xmlFileName);
                             MicroserviceYamlGenerator
-                                    .generate(resourcePath, directoryManager.getArtifactId(), dubboProperties);
+                                    .generate(resourcePath, directoryManager.getArtifactId(), dubboProperties, default_scaddress);
                             XmlGenerator.generate(resourcePath, dubboProperties);
                             providerName = dubboProperties.getApplication();
                         }
